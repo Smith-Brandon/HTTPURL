@@ -1,15 +1,13 @@
-
-import java.io.IOException;
-
 import org.w3c.dom.events.EventException;
-
 import javafx.application.Application;
 import javafx.event.EventHandler;
+import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
-import javafx.scene.input.MouseEvent;
+import javafx.scene.input.*;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
@@ -31,28 +29,33 @@ public class WebViewHTTP extends Application {
         //Create WebView
         WebView webView = new WebView();
         
-        // Create StackPane for Layout Control
+        // Create Panes for Layout Control
         FlowPane addressPane = new FlowPane();
         StackPane viewPane = new StackPane();
-        
-        // Add addressBar and submitButton
+       
+        // Add addressBar and Buttons
         Button submit = new Button("  GO  ");
         Button back = new Button("  Back  ");
         Button forw = new Button("  Forward  ");
         TextField addressBar = new TextField("https://www.google.com");
+        
+        //Add some settings to for layout
         addressBar.setMaxSize(800, 30);
         addressBar.setMinSize(500, 30);
+        FlowPane.setMargin(addressBar, new Insets(5, 5, 5, 5));
+        FlowPane.setMargin(back, new Insets(5, 5, 5, 5));
         
         //Add StackPane Alignment for Layout
         viewPane.setAlignment(Pos.BOTTOM_CENTER);
         addressPane.setAlignment(Pos.TOP_CENTER);
+        
         // Add Elements to StackPane
         viewPane.getChildren().add(webView);
         addressPane.getChildren().addAll(back, forw, addressBar, submit);
-        
-        // Create VBox with StackPanes
-        VBox vBox = new VBox(addressPane, viewPane);
 
+        // Create VBox with StackPanes
+        VBox vBox = new VBox(addressPane, viewPane);  
+       
         //Add History
         WebEngine webEngine = webView.getEngine();
         WebHistory history = webEngine.getHistory();
@@ -61,16 +64,21 @@ public class WebViewHTTP extends Application {
         submit.addEventHandler(MouseEvent.MOUSE_CLICKED, 
         	    new EventHandler<MouseEvent>() {
             @Override public void handle(MouseEvent e) {
-            	String temp = addressBar.getText();
-            	if(temp.contains("http://")) {
-					webView.getEngine().load(temp);
-				}
-				else if(temp.contains("https://")) {
-					webView.getEngine().load(temp);
-				}
-				else {
-					webView.getEngine().load("http://" + temp);
-				}
+            	try {
+	            	String temp = addressBar.getText();
+	            	if(temp.contains("http://")) {
+						webView.getEngine().load(temp);
+					}
+					else if(temp.contains("https://")) {
+						webView.getEngine().load(temp);
+					}
+					else {
+						webView.getEngine().load("http://" + temp);
+					}
+            	}
+            	catch(Exception e1){
+            		System.err.println("Something went wrong in the Submit EventHandler!");
+            	}
             }
     });
         
@@ -103,6 +111,7 @@ public class WebViewHTTP extends Application {
             }
     });
 
+
         //Create the Scene
         Scene scene = new Scene(vBox, 960, 600);
         
@@ -111,4 +120,5 @@ public class WebViewHTTP extends Application {
         primaryStage.show();
 
     }
+    
 }
